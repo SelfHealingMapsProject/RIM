@@ -448,6 +448,7 @@ class RIM:
 
         # there are 8 distinct rays that can occur between A, B, and O
         # they are explained in the paper and should be shown in the readme
+        # TODO this list is not complete for LineString and Point geometries
         _ray_types = {
             'ray1' : {
                 'Polygon' : np.array([[0,0,1],[0,0,1]]),

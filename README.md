@@ -58,7 +58,53 @@ print('According to the RIM model, B %s visible from A!' %B_visible_from_A)
 # prints 'According to the RIM model, B is not visible from A!'
 ```
 
-The 
+Here is a docstring of the RIM class, explaining how the RIM object is created and which attributes it has:
+
+    A RIM object is created from three spatial objects - A, B, and O,
+    provided as WKT strings. A and B are peripheral objects, and O is
+    a core object which is being analyzed for being in between A and B.
+
+    Attributes
+    ----------
+    A : str
+        a WKT representation of peripheral object A
+    B : str
+        a WKT representation of peripheral object B
+    O : str
+        a WKT representation of core object O
+    rays : list of str
+        a list of all rays that exist between peripheral
+        objects A and B in this specific RIM scenario;
+        ray in this case is a straight line that shares
+        exactly one point with each A and B;
+        rays are encoded as ray1-ray8 since there are 8
+        distinct rays that can theoretically occur
+    extreme_rays : list of str
+        a list of extreme rays that exist between peripheral
+        objects A and B in this specific RIM scenario,
+        extreme rays are encoded as ray1-ray8, and all extreme
+        rays are present in the 'rays' attribute as well
+    ray_area : list of dict
+        a list of dictionary entries where each entry describes a part of the
+        ray area with its WKT geometry (key 'ray area') and a list of extreme
+        rays WKT geometries (key 'extreme rays'); ray area is the area between
+        peripheral objects A and B that is covered by all rays that exist
+        between them; in case of the ray area with a single-part geometry
+        there will be only 1 element in the 'ray_area'
+    rim_matrix : 2D numpy array
+        a matrix representation of this specific RIM scenario;
+        the 3 columns represent the interior, boundary, and exterior
+        of the core object O, while the 4 rows represent interiors
+        of all rays, boundaries of all rays, interiors of extreme rays,
+        and boundaries of extreme rays; the value 0 stands for 'none of
+        the rays have this intersection', 0-1 stands for 'some of the rays
+        have this intersection', and 1 stands for 'all of the rays have
+        this intersection'
+    rim : str
+        a string representation of the rim in this specific scenario (A,B,O);
+        if the resulting rim is one of the 29 rims that were previously defined
+        in studies, the value will be in range 'rim1' - 'rim29', otherwise the
+        value will be string representation of the rim_matrix
 
 
 
@@ -71,9 +117,3 @@ See also the list of [contributors](https://github.com/your/project/contributors
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
