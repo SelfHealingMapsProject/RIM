@@ -1,2 +1,79 @@
 # RIM
-The code repository for the Python implementation of the Ray Intersection Model (RIM) - for analyzing betweenness of spatial objects.
+
+This is the code repository for the Python implementation of the Ray Intersection Model (RIM) - for analyzing spatial relationships (e.g. betweenness, intervisibility) of triplets of spatial objects.
+
+RIM is used to describe the spatial relationship of three spatial objects. It evaluates rays cast between two peripheral spatial objects, and their topological relations with the core object to determine its relative position with respect to the peripheral objects. The interpretation of relationships described with RIM (e.g. core object is between/not between the peripheral objects) is left to the user and application context.
+
+## Getting started
+
+### Prerequisites
+
+The package has been tested with the following requirements:
+- Python >= 3.6
+- numpy >= 1.17.4
+- Shapely >= 1.6.4
+
+Note that Shapely requires GDAL to be installed. More information on how to install GDAL can be found at [https://gdal.org/download.html](https://gdal.org/download.html), and at [https://pypi.org/project/GDAL/](https://pypi.org/project/GDAL/).
+
+```bash
+$ pip3 install numpy>=1.17.4
+$ pip3 install Shapely>=1.6.4
+```
+
+### Installing
+
+The **rim** Python package can be installed via pip
+
+```bash
+$ pip3 install rim
+```
+
+### Usage
+
+Here is an example of a simple Python script where RIM is used to analyze spatial relationships of three polygon geometries.
+
+```python
+#!/usr/bin/python3
+from rim import RIM
+
+A = 'POLYGON((1 1, 1 5, 3 5, 3 1, 1 1))'
+B = 'POLYGON((7 1, 7 5, 9 5, 9 1, 7 1))'
+O = 'POLYGON((4 0, 4 6, 6 6, 6 0, 4 0))'
+
+rimobject = RIM(A,B,O)
+
+print(rimobject.rim)
+# prints 'RIM 13'
+print(rimobject.rim_matrix)
+# prints [[1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0]]
+print(rimobject.rays)
+# prints ['ray5']
+
+if 'ray1' in rimobject.rays or 'ray8' in rimobject.rays:
+    B_visible_from_A = 'is'
+else:
+    B_visible_from_A = 'is not'
+
+print('According to the RIM model, B %s visible from A!' %B_visible_from_A)
+# prints 'According to the RIM model, B is not visible from A!'
+```
+
+The 
+
+
+
+## Authors
+
+* **Ivan Majic** - *Initial work*
+
+See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+
+* Hat tip to anyone whose code was used
+* Inspiration
+* etc
