@@ -1,0 +1,9 @@
+README.md
+setup.cfg
+setup.py
+rim/__init__.py
+rim.egg-info/PKG-INFO
+rim.egg-info/SOURCES.txt
+rim.egg-info/dependency_links.txt
+rim.egg-info/requires.txt
+rim.egg-info/top_level.txt

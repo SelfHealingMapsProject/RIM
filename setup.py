@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
      name='rim',
-     version='0.3.6',
+     version='0.3.7',
      author="Ivan Majic",
      author_email="imajicos@gmail.com",
      description="A package for calculating RIM between three spatial objects",
