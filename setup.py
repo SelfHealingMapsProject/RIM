@@ -16,7 +16,7 @@ setuptools.setup(
      long_description_content_type="text/markdown",
      url="https://github.com/SelfHealingMapsProject/RIM",
      packages=setuptools.find_packages(),
-     install_requires=requirements,
+     install_requires=['numpy==1.17.4', 'Shapely==1.6.4'],
      classifiers=[
          "Programming Language :: Python :: 3",
          "License :: OSI Approved :: MIT License",
