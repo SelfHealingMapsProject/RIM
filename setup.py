@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
      name='rim',
-     version='0.3.5',
+     version='0.3.6',
      author="Ivan Majic",
      author_email="imajicos@gmail.com",
      description="A package for calculating RIM between three spatial objects",
