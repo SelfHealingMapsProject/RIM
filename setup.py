@@ -3,9 +3,17 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+# fetch version from the main code file
+__version__ = ''
+with open('rim/__init__.py') as initpy:
+  for line in initpy:
+      if line.startswith('__version__'):
+          exec(line.strip())
+          break
+
 setuptools.setup(
      name='rim',
-     version='0.3.8',
+     version=__version__,
      author="Ivan Majic",
      author_email="imajicos@gmail.com",
      description="A package for calculating RIM between three spatial objects",
