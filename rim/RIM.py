@@ -1,7 +1,6 @@
-import shapely.wkt, shapely.geometry
-from shapely.ops import polygonize, split, unary_union
+import shapely.wkt, shapely.geometry, shapely.ops
 import numpy as np
-from itertools import combinations, product, chain
+import itertools
 
 class RIM:
     """
@@ -142,7 +141,7 @@ class RIM:
             # especially because geometry types can vary
             # (e.g. points and multipoints)
             pointslist = [pointsFromType(geom) for geom in O]
-            points = list(chain.from_iterable(pointslist))
+            points = list(itertools.chain.from_iterable(pointslist))
         else:
             # just get the points of a single object O
             points = pointsFromType(O)
@@ -210,7 +209,7 @@ class RIM:
                     chull_diff = chull_diff.difference(geom)
                     # will result in a polygon or a multipolygon
                 elif geom.geom_type == 'LineString':
-                    chull_diff = split(chull_diff, geom)
+                    chull_diff = shapely.ops.split(chull_diff, geom)
                     # will always result in a geometrycollection
 
             self._checkValid(geomcol, chullAB, chull_diff)
@@ -278,7 +277,7 @@ class RIM:
                         boundary_not_touching_both_A_and_B
                         .append(boundary_diff_A_and_B)
                     )
-                boundary_not_touching_both_A_and_B = unary_union(
+                boundary_not_touching_both_A_and_B = shapely.ops.unary_union(
                     boundary_not_touching_both_A_and_B
                     )
                 if not boundary_not_touching_both_A_and_B.is_empty:
@@ -293,9 +292,9 @@ class RIM:
                                 lines_to_polygonize
                                 .union(peripheral_geom.boundary)
                             )
-                    polygonized_pol = unary_union(
+                    polygonized_pol = shapely.ops.unary_union(
                         list(
-                            polygonize(lines_to_polygonize)
+                            shapely.ops.polygonize(lines_to_polygonize)
                             )
                         )
                     new_chull_diff_geom = shapely.geometry.Polygon(
@@ -368,7 +367,7 @@ class RIM:
                             extended_line = self._extendLine(
                                 p1.x, p1.y, p2.x, p2.y)
                         # split the polygon in 2 by the extended line
-                        polygon_remaining_split = split(
+                        polygon_remaining_split = shapely.ops.split(
                             polygon_remaining,
                             extended_line
                             )
@@ -583,7 +582,7 @@ class RIM:
                     # difference of polygon and line doesn't do anything, so use
                     # split in that case
                     if Otype == 'LineString':
-                        difference = split(Ra, O)
+                        difference = shapely.ops.split(Ra, O)
                         # will always result in a geometrycollection
                     else:
                         difference = Ra.difference(O)
@@ -606,10 +605,10 @@ class RIM:
 
                         def check_lines_for_ray1(p1list, p2list = None) -> bool:
                             if p2list:
-                                myiter = product(p1list, p2list)
+                                myiter = itertools.product(p1list, p2list)
                                 both_ways = False
                             else:
-                                myiter = combinations(p1list, 2)
+                                myiter = itertools.combinations(p1list, 2)
                                 both_ways = True
                             for p1,p2 in myiter:
                                 extended_line = self._extendLine(

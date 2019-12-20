@@ -1,5 +1,7 @@
 README.md
+setup.cfg
 setup.py
+rim/RIM.py
 rim/__init__.py
 rim.egg-info/PKG-INFO
 rim.egg-info/SOURCES.txt
