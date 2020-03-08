@@ -1,6 +1,59 @@
 import RIM
 
+# import other packages
+import json
+from shapely.geometry import shape
+import csv
 
-rimobject = RIM.RIM('MULTIPOLYGON (((16137263.81 -4551139.62, 16137266.16 -4551123.630000002, 16137279.72 -4551125.420000002, 16137280.42 -4551120, 16137300.43 -4551122.68, 16137299.81 -4551128.010000003, 16137310.03 -4551129.48, 16137307.61 -4551146.17, 16137298.36 -4551144.860000001, 16137297.62 -4551150.05, 16137276.38 -4551146.82, 16137277.49 -4551141.550000002, 16137263.81 -4551139.62)))','MULTIPOLYGON (((16137187.36 -4551199.05, 16137190.92 -4551174.83, 16137192.5 -4551175.040000002, 16137193.31 -4551175.15, 16137195.51 -4551159.73, 16137196.11 -4551155.540000003, 16137193.78 -4551155.22, 16137194.77 -4551148.67, 16137211.56 -4551151.300000002, 16137208.42 -4551172.550000002, 16137228.02 -4551175.39, 16137229.69 -4551165.259999999, 16137232.31 -4551149.400000002, 16137250.47 -4551152.260000003, 16137247.92 -4551169.450000002, 16137246.42 -4551178.310000001, 16137264.33 -4551181.17, 16137265.75 -4551172.32, 16137280.09 -4551174.24, 16137274.32 -4551212.530000001, 16137259.04 -4551210.36, 16137259.77 -4551205.66, 16137250.7 -4551204.340000002, 16137243.02 -4551203.25, 16137242.53 -4551207.49, 16137228.32 -4551205.180000002, 16137215.81999999 -4551203.150000001, 16137216.27 -4551198.910000002, 16137210.74 -4551198.08, 16137205.34 -4551197.26, 16137204.16 -4551201.48, 16137187.36 -4551199.05)))','MULTIPOLYGON (((16137275.4 -4551247.820000002, 16137275.78 -4551245.100000001, 16137284.82 -4551179.760000003, 16137288.47 -4551153.370000001, 16137313.87 -4551156.900000002, 16137310.38 -4551185.240000001, 16137300.8 -4551251.340000002, 16137275.4 -4551247.820000002)))')
+# define the path to the geojson file holding the data about unimelb buildings
+data_path = 'rim/testdata/29_unimelb_buildings.geojson'
 
-import ipdb; ipdb.set_trace()
+# read the contents of the file into a string
+with open(data_path, 'r') as f:
+    data_string = f.read()
+
+# read the contents of the string into a json object
+data = json.loads(data_string)
+# get the features from the json object -- each feature is a building
+features = data['features']
+
+def json2wkt(feature):
+    """ A helper function that takes in a feature from the features 
+    object and returns its geometry as a WKT string """
+    shapelyshape = shape(feature['geometry'])
+    return shapelyshape.wkt
+
+# create a dictionary from which buildings geometries (in WKT string format) can be accessed by building ids
+# the keys are building ids and values are WKT geometries {bid : WKTgeom}
+buildings_data = {
+    feature['properties']['bid'] : json2wkt(feature) for feature in features
+}
+
+buildings_data
+
+# read in the list of triplets of buildings for RIM calculation
+filepath = 'rim/testdata/unimelb_buildings_triplets.csv'
+with open(filepath, 'r') as f:
+    reader = csv.DictReader(f, delimiter=';')
+    triplets = [row for row in reader]
+    
+rimobjects = []
+for row in triplets:
+    a_geom = buildings_data.get(int(row['A']))
+    b_geom = buildings_data.get(int(row['B']))
+    o_geom = buildings_data.get(int(row['O']))
+    try:
+        rimobject = RIM.RIM(a_geom, b_geom, o_geom)
+        rimobjects.append(rimobject.rim)
+        if '[' in rimobject.rim:
+            print(rimobject.rim)
+    except Exception as e:
+        rimobjects.append(str(e))
+        print(e)
+
+import collections
+
+ctr = collections.Counter(rimobjects)
+print(ctr)
+
+print(rimobjects)
