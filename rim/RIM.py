@@ -86,14 +86,45 @@ class RIM:
             >>> rimobject.rays
             ['ray5']
         """
-        self.A = A
-        self.B = B
-        self.O = O
+        # self.A = A
+        self.A = self._loadPeripheral(A)
+        self.B = self._loadPeripheral(B)
+        self.O = self._loadObject(O)
         self.rays = []
         self.extreme_rays = []
         self.rim_matrix = None
         self.ray_area = self._rayArea()
         self.rim = self._RIM()
+
+    def _loadObject(self, wktobject: str) -> shapely.geometry:
+        """
+        Takes in the WKT string representing the geometry of the object.
+        If the object is recorded as a multi-geometry, this function tries to
+        convert it to singe-geometry if possible. This will be possible only for
+        single geometries that are recorded as a multi-geometry (e.g., a polygon can 
+        be recorded as a WKT multipolygon with just one part). Finally, returns the
+        shapely geometry object that can be used in the rest of the package.
+        """
+        shapely_object = shapely.wkt.loads(wktobject)
+        if 'Multi' in shapely_object.type and len(shapely_object) == 1:
+            # the object is a multi-geometry with only 1 geom
+            # make that single geom a shapely object
+            shapely_object = shapely_object[0]
+        self._checkValid(shapely_object)
+        return shapely_object
+
+    def _loadPeripheral(self, wktobject: str) -> shapely.geometry:
+        """
+        Takes in the WKT string representing the geometry of the object.
+        Calls the function _loadObject on this WKT. If the resulting shapely
+        geometry is a multi-geometry, the error is raised because multi-geometry
+        peripheral objects are not supported in RIM.
+        """
+        shapely_object = self._loadObject(wktobject)
+        if 'Multi' in shapely_object.type:
+            raise ValueError('RIM does not support multi-part peripheral objects:\n%s' % geom.wkt)
+        else:
+            return shapely_object
 
     def _checkValid(self, *geoms: shapely.geometry) -> None:
         """
@@ -183,8 +214,10 @@ class RIM:
         """
 
         try:
-            A = shapely.wkt.loads(self.A)
-            B = shapely.wkt.loads(self.B)
+            # A = shapely.wkt.loads(self.A)
+            # B = shapely.wkt.loads(self.B)
+            A = self.A
+            B = self.B
 
             # Check if peripheral objects A and B are
             # overlapping - which is not allowed
@@ -550,10 +583,16 @@ class RIM:
             'RIM 27',
             '[0.5, 0.5, 0.5, 0.0, 0.5, 0.5, 0.5, 0.5, 1.0, 0.0, 0.0, 1.0]' :
             'RIM 28',
+            # a line crossing the ray area and both extreme rays
             '[0.5, 0.5, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0]' :
-            'RIM 29', # a line crossing the ray area and both extreme rays
+            'RIM 29',
+            # disjoint when one extreme ray is a point
             '[0.0, 0.0, 1.0, 0.0, 0.0, 0.5, 0.0, 0.0, 1.0, 0.0, 0.0, 0.5]' :
-            'RIM 30', # disjoint when one extreme ray is a point
+            'RIM 23', 
+            '[0.0, 0.0, 1.0, 0.0, 0.5, 0.5, 0.0, 0.0, 1.0, 0.0, 0.5, 0.5]' :
+            'RIM 22',
+            '[0.5, 0.5, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 1.0, 0.0, 0.5, 0.5]' :
+            'RIM 17',
         }
 
         try:
@@ -565,9 +604,12 @@ class RIM:
             else:
                 all_ray_areas = self.ray_area[1]
             
-            A = shapely.wkt.loads(self.A)
-            B = shapely.wkt.loads(self.B)
-            O = shapely.wkt.loads(self.O)
+            # A = shapely.wkt.loads(self.A)
+            # B = shapely.wkt.loads(self.B)
+            # O = shapely.wkt.loads(self.O)
+            A = self.A
+            B = self.B
+            O = self.O
 
             final_result = []
             for ray_area in all_ray_areas:
@@ -577,7 +619,8 @@ class RIM:
                 extreme_rays = []
 
                 if O.disjoint(Ra):
-                    rays.append(_ray_types['ray1'])
+                    Otype = O.geom_type.replace('Multi', '')
+                    rays.append(_ray_types['ray1'][Otype])
 
                 else:
                     # I am removing 'Multi' from the geometry type string, so
@@ -739,6 +782,8 @@ class RIM:
 
             if len(result) > 1:
                 result = [x for x in result if x != 'RIM 23']
+                if result == []:
+                    result = ['RIM 23']
             if len(result) == 1:
                 result = result[0]
             return str(result)
