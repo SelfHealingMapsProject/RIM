@@ -9,7 +9,7 @@ RIM is used to describe the spatial relationship of three spatial objects. It ev
 ### Prerequisites
 
 The package has been tested with the following requirements:
-- Python >= 3.6
+- Python >= 3.5
 - numpy >= 1.17.4
 - Shapely >= 1.6.4
 
