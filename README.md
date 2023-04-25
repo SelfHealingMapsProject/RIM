@@ -114,6 +114,21 @@ Here is a docstring of the RIM class, explaining how the RIM object is created a
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
+## References
+
+The RIM model is featured in the following academic publications:
+
+Ivan Majic, Elham Naghizade, Stephan Winter, and Martin Tomko. RIM: A ray intersection model
+for the analysis of the between relationship of spatial objects in a 2D plane. International Journal
+of Geographical Information Science, pages 1-26, 2020. [doi:10.1080/13658816.2020.1778002](https://doi.org/10.1080/13658816.2020.1778002)
+
+Ivan Majic, Elham Naghizade, Stephan Winter, and Martin Tomko. There is no way! Ternary
+qualitative spatial reasoning for error detection in map data. Transactions in GIS, 2021. [doi:10.1111/tgis.12765](https://doi.org/10.1111/tgis.12765)
+
+Ningran Xu, Ivan Majic, and Martin Tomko. Perceptions of Qualitative Spatial Arrangements of
+Three Objects. 15th International Conference on Spatial Information Theory (COSIT 2022), pages
+1-14, Kobe, Japan, 2022. [doi:10.4230/LIPIcs.COSIT.2022.9](https://doi.org/10.4230/LIPIcs.COSIT.2022.9)
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
